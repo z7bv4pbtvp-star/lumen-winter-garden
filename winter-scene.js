@@ -1,11 +1,12 @@
+import {createSchoolStands} from './school-stands.js?v=5';
 import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/OrbitControls.js';
 import {RoomEnvironment} from 'three/addons/RoomEnvironment.js';
 import {mergeGeometries} from 'three/addons/BufferGeometryUtils.js';
 import {RoundedBoxGeometry} from 'three/addons/RoundedBoxGeometry.js';
 
-export async function createWinterScene({container,getState,onMode,onGift}){
-  let mobile=innerWidth<=760;let tween=null;
+export async function createWinterScene({container,getState,onMode,onGift,onSchool}){
+  let mobile=innerWidth<=760;let tween=null,overviewActive=true;
   const phone=mobile||matchMedia('(pointer:coarse)').matches;
   const lean=phone||(navigator.deviceMemory&&navigator.deviceMemory<=4)||(navigator.hardwareConcurrency&&navigator.hardwareConcurrency<=4);
   let renderScale=Math.min(devicePixelRatio,lean?1.15:1.4);
@@ -16,10 +17,12 @@ export async function createWinterScene({container,getState,onMode,onGift}){
   renderer.setPixelRatio(renderScale);renderer.setSize(innerWidth,innerHeight);renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;renderer.outputColorSpace=THREE.SRGBColorSpace;
   renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.shadowMap.autoUpdate=false;renderer.shadowMap.needsUpdate=true;container.appendChild(renderer.domElement);
   const camera=new THREE.PerspectiveCamera(mobile?52:44,innerWidth/innerHeight,.1,130);
-  const initial=()=>mobile?new THREE.Vector3(8.8,4.7,13.7):new THREE.Vector3(9.2,4.6,14);
-  camera.position.copy(initial());const target=new THREE.Vector3(0,3.7,0);
-  const controls=new OrbitControls(camera,renderer.domElement);controls.target.copy(target);controls.enableDamping=true;controls.dampingFactor=.09;controls.enablePan=false;controls.minDistance=6;controls.maxDistance=16.7;controls.minPolarAngle=.30;controls.maxPolarAngle=Math.PI/2-.04;controls.autoRotate=!reduced;controls.autoRotateSpeed=.17;controls.enabled=false;controls.update();
-  controls.addEventListener('start',()=>{controls.autoRotate=false;tween=null;});
+  const overviewTarget=new THREE.Vector3(0,3.55,-.7);
+  function overview(){const aspect=innerWidth/innerHeight,halfWidth=innerWidth<=760&&innerHeight>innerWidth?5.8:9.4,halfHeight=4.5,vFov=THREE.MathUtils.degToRad(mobile?52:44);const distance=Math.max(halfHeight/Math.tan(vFov/2),halfWidth/(Math.tan(vFov/2)*aspect));return new THREE.Vector3(0,5.35,Math.max(18,distance));}
+  const initial=overview;
+  camera.position.copy(initial());const target=overviewTarget.clone();
+  const controls=new OrbitControls(camera,renderer.domElement);controls.target.copy(target);controls.enableDamping=true;controls.dampingFactor=.09;controls.enablePan=false;controls.minDistance=6;controls.maxDistance=52;controls.minPolarAngle=.30;controls.maxPolarAngle=Math.PI/2-.04;controls.autoRotate=false;controls.autoRotateSpeed=.17;controls.enabled=false;controls.update();
+  controls.addEventListener('start',()=>{controls.autoRotate=false;tween=null;overviewActive=false;});
   const pmrem=new THREE.PMREMGenerator(renderer);const room=new RoomEnvironment();const env=pmrem.fromScene(room,.035);scene.environment=env.texture;scene.environmentIntensity=.18;room.dispose();pmrem.dispose();
   const hemi=new THREE.HemisphereLight('#9ecbff','#34402f',.28);scene.add(hemi);
   const moon=new THREE.DirectionalLight('#a1c9ff',.45);moon.position.set(-9,13,-7);scene.add(moon);
@@ -47,7 +50,7 @@ export async function createWinterScene({container,getState,onMode,onGift}){
   ring(17.9,.82,goldMat,.038);ring(17.9,.08,structuralMat,.045);ring(17.9,9.6,structuralMat,.09);ring(17.9,9.68,edgeGlowMat,.012);
   for(let i=0;i<12;i++){
     const a=i*Math.PI/6,x=Math.cos(a)*17.9,z=Math.sin(a)*17.9;
-    const post=new THREE.Mesh(new THREE.CylinderGeometry(.035,.055,9.9,10),structuralMat);post.position.set(x,4.83,z);scene.add(post);
+    const post=new THREE.Mesh(new THREE.CylinderGeometry(.035,.055,9.9,10),structuralMat);post.position.set(x,4.83,z);if(i!==3)scene.add(post);
     const points=[];for(let j=0;j<=40;j++){const t=j/40,ang=a+t*Math.PI/6;points.push(new THREE.Vector3(Math.cos(ang)*17.9,9.1-Math.sin(t*Math.PI)*1.7,Math.sin(ang)*17.9));}
     const strand=new THREE.CatmullRomCurve3(points);scene.add(new THREE.Mesh(new THREE.TubeGeometry(strand,40,.009,3,false),structuralMat));
     for(let j=0;j<13;j++){const p=strand.getPoint(j/13);const bulb=new THREE.Mesh(new THREE.SphereGeometry(.027,5,4),edgeGlowMat);bulb.position.copy(p);scene.add(bulb);}
@@ -152,11 +155,13 @@ export async function createWinterScene({container,getState,onMode,onGift}){
   const snowfall=new THREE.Points(snowGeo,flakeMat);scene.add(snowfall);
   const burstCount=lean?120:200,burstPos=new Float32Array(burstCount*3),burstVel=[],burstGeo=new THREE.BufferGeometry();burstGeo.setAttribute('position',new THREE.BufferAttribute(burstPos,3));const burstMat=new THREE.PointsMaterial({color:new THREE.Color('#ffd591').multiplyScalar(2.5),size:.075,map:glowMap,transparent:true,opacity:0,depthWrite:false,blending:THREE.AdditiveBlending});const burstMesh=new THREE.Points(burstGeo,burstMat);scene.add(burstMesh);let burst=0;
 
+  const schoolStands=await createSchoolStands(scene,getState().lang);
+
   // Static surfaces share geometry batches. Gift hit areas stay on a separate
   // interaction layer, so batching does not remove their click behaviour.
   scene.updateMatrixWorld(true);
-  const batches=new Map(),giftHitSet=new Set(giftBodies);
-  const staticMeshes=[];scene.traverse(o=>{if(o.isMesh&&!o.isInstancedMesh&&o!==star&&!Array.isArray(o.material))staticMeshes.push(o);});
+  const batches=new Map(),giftHitSet=new Set([...giftBodies,...schoolStands.hitAreas]);
+  const staticMeshes=[];scene.traverse(o=>{if(o.isMesh&&!o.isInstancedMesh&&!o.userData.schoolStand&&o!==star&&!Array.isArray(o.material))staticMeshes.push(o);});
   for(const mesh of staticMeshes){
     const key=mesh.material.uuid+':'+mesh.castShadow+':'+mesh.receiveShadow;
     if(!batches.has(key))batches.set(key,{material:mesh.material,cast:mesh.castShadow,receive:mesh.receiveShadow,geometries:[]});
@@ -182,7 +187,7 @@ export async function createWinterScene({container,getState,onMode,onGift}){
     if(qa){qaFrames++;if(now-qaAt>1000){qaHud.textContent=JSON.stringify({fps:Math.round(qaFrames*1000/(now-qaAt)),drawCalls:renderer.info.render.calls,triangles:renderer.info.render.triangles,needles:needles.count,pixelRatio:renderer.getPixelRatio()});qaFrames=0;qaAt=now;}}
   }
   function resize(){
-    mobile=innerWidth<=760;camera.aspect=innerWidth/innerHeight;camera.fov=mobile?52:44;camera.updateProjectionMatrix();
+    mobile=innerWidth<=760;schoolStands.layout();camera.aspect=innerWidth/innerHeight;camera.fov=mobile?52:44;camera.updateProjectionMatrix();if(overviewActive&&!tween){camera.position.copy(overview());controls.target.copy(overviewTarget);controls.update();}
     renderer.setPixelRatio(Math.min(renderScale,mobile?1.15:1.4));renderer.setSize(innerWidth,innerHeight);flakeMat.uniforms.uPixelRatio.value=renderer.getPixelRatio();
     if(!raf)render();
   }
@@ -203,16 +208,18 @@ export async function createWinterScene({container,getState,onMode,onGift}){
     if(getState().mode==='walk'){container.focus({preventScroll:true});if(tween){tween=null;walkOrientation();}drag=true;lastX=e.clientX;lastY=e.clientY;renderer.domElement.setPointerCapture(e.pointerId);}
   });
   renderer.domElement.addEventListener('pointermove',e=>{if(!drag||getState().mode!=='walk')return;targetYaw-=(e.clientX-lastX)*.0035;targetPitch=THREE.MathUtils.clamp(targetPitch-(e.clientY-lastY)*.0028,-.9,.9);lastX=e.clientX;lastY=e.clientY;});
-  renderer.domElement.addEventListener('pointerup',e=>{drag=false;if(downAt&&Math.hypot(e.clientX-downAt.x,e.clientY-downAt.y)<6){pointer.set(e.clientX/innerWidth*2-1,-e.clientY/innerHeight*2+1);ray.setFromCamera(pointer,camera);if(ray.intersectObjects(giftBodies,false).length)onGift();}downAt=null;});
+  renderer.domElement.addEventListener('pointerup',e=>{drag=false;if(downAt&&Math.hypot(e.clientX-downAt.x,e.clientY-downAt.y)<6){pointer.set(e.clientX/innerWidth*2-1,-e.clientY/innerHeight*2+1);ray.setFromCamera(pointer,camera);const schoolHit=ray.intersectObjects(schoolStands.hitAreas,false)[0];if(schoolHit)onSchool(schoolStands.indexAt(schoolHit));else if(ray.intersectObjects(giftBodies,false).length)onGift();}downAt=null;});
   renderer.domElement.addEventListener('pointercancel',()=>{drag=false;downAt=null;});
   document.querySelectorAll('[data-dir]').forEach(b=>{b.addEventListener('pointerdown',e=>{e.preventDefault();keys.add(b.dataset.dir);b.setPointerCapture(e.pointerId);});['pointerup','pointercancel','lostpointercapture'].forEach(ev=>b.addEventListener(ev,()=>keys.delete(b.dataset.dir)));});
   const api={
-    enter(){controls.enabled=false;glide(new THREE.Vector3(8.6,4.15,13.5),new THREE.Vector3(0,3.65,0),1000,()=>{controls.enabled=true;});start();},
-    reset(){controls.enabled=false;glide(new THREE.Vector3(8.6,4.15,13.5),new THREE.Vector3(0,3.65,0),850,()=>{controls.enabled=true;});start();},
-    home(){stop();keys.clear();velocity.set(0,0,0);tween=null;controls.enabled=true;camera.position.copy(initial());controls.target.copy(target);controls.update();render();},
+    enter(){overviewActive=true;controls.enabled=false;glide(overview(),overviewTarget.clone(),850,()=>{controls.enabled=true;});start();},
+    reset(){overviewActive=true;controls.enabled=false;glide(overview(),overviewTarget.clone(),850,()=>{controls.enabled=true;});start();},
+    language(value){schoolStands.setLanguage(value);if(!raf)render();},
+    treeView(){overviewActive=false;controls.enabled=false;glide(new THREE.Vector3(8.6,4.15,13.5),new THREE.Vector3(0,3.65,0),850,()=>{controls.enabled=true;});start();},
+    home(){overviewActive=true;stop();keys.clear();velocity.set(0,0,0);tween=null;controls.enabled=true;camera.position.copy(initial());controls.target.copy(target);controls.update();render();},
     setMode(mode){
       keys.clear();velocity.set(0,0,0);controls.enabled=false;
-      if(mode==='walk'){glide(new THREE.Vector3(camera.position.x,1.8,camera.position.z),new THREE.Vector3(0,3.1,0),650,walkOrientation);}
+      if(mode==='walk'){overviewActive=false;const walkPos=camera.position.clone();const radius=Math.hypot(walkPos.x,walkPos.z);if(radius>16.5)walkPos.multiplyScalar(16.5/radius);glide(new THREE.Vector3(walkPos.x,1.8,walkPos.z),new THREE.Vector3(0,3.1,0),650,walkOrientation);}
       else{const pos=camera.position.clone();pos.y=4.15;glide(pos,new THREE.Vector3(0,3.65,0),650,()=>{controls.enabled=true;});}start();
     },
     pause(){if(!paused)pauseAt=performance.now();paused=true;keys.clear();velocity.set(0,0,0);stop();},resume(){if(paused&&tween)tween.start+=performance.now()-pauseAt;paused=false;start();},
@@ -235,7 +242,7 @@ export async function createWinterScene({container,getState,onMode,onGift}){
       forward.set(-Math.sin(yaw),0,-Math.cos(yaw));right.set(Math.cos(yaw),0,-Math.sin(yaw));desired.set(0,0,0);
       if(keys.has('forward'))desired.add(forward);if(keys.has('back'))desired.sub(forward);if(keys.has('right'))desired.add(right);if(keys.has('left'))desired.sub(right);
       desired.normalize().multiplyScalar(2.8);velocity.lerp(desired,1-Math.exp(-13*dt));next.copy(camera.position).addScaledVector(velocity,dt);
-      const r=Math.hypot(next.x,next.z),bounded=THREE.MathUtils.clamp(r,4.15,16.8);if(r>0&&r!==bounded){next.x*=bounded/r;next.z*=bounded/r;}camera.position.copy(next);camera.position.y=1.8;camera.rotation.set(pitch,yaw,0,'YXZ');
+      const r=Math.hypot(next.x,next.z),bounded=THREE.MathUtils.clamp(r,4.15,16.8);if(r>0&&r!==bounded){next.x*=bounded/r;next.z*=bounded/r;}if(!schoolStands.hitAreas.some(face=>{const center=face.getWorldPosition(tempA);return Math.abs(next.x-center.x)<2.8&&Math.abs(next.z-center.z)<.6;}))camera.position.copy(next);camera.position.y=1.8;camera.rotation.set(pitch,yaw,0,'YXZ');
     }else controls.update(dt);
     if(!reduced){sparkleMaterial.uniforms.uTime.value=time;lanternGlowMat.uniforms.uTime.value=time*.3;flakeMat.uniforms.uTime.value=time;star.position.y=7.35+Math.sin(time*.8)*.025;}
     starHalo.position.y=star.position.y;star.rotation.y=Math.atan2(camera.position.x,camera.position.z);

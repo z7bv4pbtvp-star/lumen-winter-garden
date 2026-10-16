@@ -7,8 +7,9 @@
   <meta name="description" content="LUMEN — интерактивная мультимедийная ёлка. Автор: Якушевич Арсений, ученик 11-го класса.">
   <title>LUMEN — ёлка будущего</title>
   <link rel="icon" href="data:,">
-  <link rel="stylesheet" href="./style.css?v=4">
-  <link rel="stylesheet" href="./interface.css?v=4">
+  <link rel="stylesheet" href="./style.css?v=5">
+  <link rel="stylesheet" href="./interface.css?v=5">
+  <link rel="stylesheet" href="./school.css?v=5">
   <script type="importmap">{"imports":{"three":"./assets/three.module.min.js","three/addons/":"./assets/"}}</script>
 </head>
 <body>
@@ -19,6 +20,7 @@
     <button class="back-home" id="home" data-i18n="homeText" aria-label="На начальный экран">← Начало</button>
     <nav class="nav" aria-label="Навигация">
       <button class="nav-link active" id="exhibit" data-i18n="exhibit">Инсталляция</button>
+      <button class="nav-link" id="school-nav" data-i18n="schoolNav">Наша школа</button>
       <button class="nav-link" id="about" data-i18n="about">Идея проекта</button>
       <button class="nav-link nav-gift" id="gift-nav"><span data-i18n="gift">Подарок жюри</span><span class="tiny-arrow">↗</span></button>
     </nav>
@@ -51,6 +53,7 @@
       <div class="move-hint"><span class="keycaps"><kbd>W</kbd><span><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd></span></span><p data-i18n-html="walkHint">Двигайтесь клавишами<br><b>Осматривайтесь мышью</b></p></div>
       <button class="wish-btn" id="wish"><span>✦</span><span data-i18n="wish">Зажечь желание</span></button>
       <div class="mode-switch" role="group"><button id="orbit-mode" class="selected" data-i18n="orbit">Обзор</button><button id="walk-mode" data-i18n="walk">Прогулка</button></div>
+      <button class="school-button" id="school-open"><span aria-hidden="true">▧</span><span data-i18n="schoolButton">Наша школа · 7 фото</span><span aria-hidden="true">↗</span></button>
       <p class="gift-hint" data-i18n="giftHint">Нажмите на подарок под ёлкой ✧</p>
     </section>
     <div id="wish-message" class="wish-message" role="status"></div>
@@ -103,6 +106,13 @@
       <p class="project-credit" data-i18n="credit">Якушевич Арсений, ученик 11-го класса, п. Мухавец.</p>
     </div>
   </dialog>
-  <script type="module" src="./app.js?v=4"></script>
+  <dialog id="school-gallery" class="panel school-gallery" aria-labelledby="school-title">
+    <div class="panel-top"><span class="overline" data-i18n="schoolTag">ШКОЛЬНЫЙ ФОТОАЛЬБОМ · МУХАВЕЦ</span><button class="close" data-close aria-label="Закрыть">×</button></div>
+    <div class="school-content">
+      <figure class="school-photo"><img id="school-image" alt=""><figcaption><span id="school-count">01 / 07</span><span id="school-caption"></span></figcaption></figure>
+      <div class="school-story"><p class="school-overline" data-i18n="schoolLabel">СОЗДАЁМ ПРАЗДНИК ВМЕСТЕ</p><h2 id="school-title" data-i18n="schoolTitle">Как наша школа встречает Новый год</h2><p data-i18n="schoolIntro">Тёплые встречи, творчество, награды и улыбки. Семь моментов из жизни нашей школы.</p><div class="school-thumbnails" id="school-thumbnails" role="group" aria-label="Фотографии школы"></div><p class="school-source" data-i18n="schoolSource">Фотографии из Instagram школы, предоставленные для проекта.</p></div>
+    </div>
+  </dialog>
+  <script type="module" src="./app.js?v=5"></script>
 </body>
 </html>

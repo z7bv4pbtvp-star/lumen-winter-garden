@@ -1,9 +1,10 @@
+import {schoolPhotos,schoolImage} from './school-data.js?v=5';
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
 const safeStorage = {get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v)}catch{}}};
 const copy = {
   ru:{
-    homeText:'← Начало',edition:'НОВЫЙ ГОД / 2027',concept:'LUMEN / КОНЦЕПЦИЯ',aboutMobile:'Идея проекта ↗',resetAria:'Вернуть общий вид',exhibit:'Общий вид',about:'Идея проекта',gift:'Подарок жюри',eyebrow:'НОВОГОДНЯЯ ИНТЕРАКТИВНАЯ ИСТОРИЯ',
+    schoolNav:'Наша школа',schoolButton:'Наша школа · 7 фото',schoolTag:'ШКОЛЬНЫЙ ФОТОАЛЬБОМ · МУХАВЕЦ',schoolLabel:'СОЗДАЁМ ПРАЗДНИК ВМЕСТЕ',schoolTitle:'Как наша школа встречает Новый год',schoolIntro:'Тёплые встречи, творчество, награды и улыбки. Семь моментов из жизни нашей школы.',schoolSource:'Фотографии из Instagram школы, предоставленные для проекта.',schoolAria:'Фотографии школы',homeText:'← Начало',edition:'НОВЫЙ ГОД / 2027',concept:'LUMEN / КОНЦЕПЦИЯ',aboutMobile:'Идея проекта ↗',resetAria:'Вернуть общий вид',exhibit:'К ёлке',about:'Идея проекта',gift:'Подарок жюри',eyebrow:'НОВОГОДНЯЯ ИНТЕРАКТИВНАЯ ИСТОРИЯ',
     title:'Пусть случится<br> <em>чудо.</em>',intro:'Тихо падает снег. Мерцают огни. И где-то между ветвями уже прячется ваше новогоднее желание.',enter:'Войти в зимний сад',introHint:'Лучше со звуком · настоящая 3D-прогулка',objectLabel:'СВЕТ, КОТОРЫЙ ОБЪЕДИНЯЕТ',
     referenceLabel:'Визуальный эскиз зимнего сада',authorFull:'Якушевич Арсений',authorSchool:'ученик 11-го класса · п. Мухавец',authorLabel:'АВТОР ПРОЕКТА',monogram:'АЯ',authorName:'Якушевич<br> Арсений',class:'ученик 11-го класса',authorNote:'Создаю сегодня.\nМечтаю о будущем.',openGift:'Для тех, кто верит в идеи',
     sceneCaption:'ВЫБЕРИТЕ НАСТРОЕНИЕ',emerald:'Рождественский',aurora:'Лунный свет',gold:'Золотой час',soundOff:'Звук выкл.',soundOn:'Звук вкл.',loading:'Собираем свет…',welcome:'ЗИМНИЙ САД · LUMEN',walkHint:'Двигайтесь клавишами<br><b>Осматривайтесь мышью</b>',orbitHint:'Вращайте сцену мышью<br><b>Масштаб — колёсиком · WASD — прогулка</b>',giftHint:'Нажмите на подарок под ёлкой ✧',wish:'Загадать желание',orbit:'Обзор',walk:'Прогулка',
@@ -16,7 +17,7 @@ const copy = {
     sceneAria:'Интерактивная трёхмерная ёлка. Вращайте мышью. WASD или стрелки — прогулка.',navAria:'Навигация',homeAria:'На начальный экран',closeAria:'Закрыть',snowAria:'Снег',fullAria:'Полный экран',themesAria:'Световые настроения',forward:'Вперёд',back:'Назад',left:'Влево',right:'Вправо'
   },
   be:{
-    homeText:'← Пачатак',edition:'НОВЫ ГОД / 2027',concept:'LUMEN / КАНЦЭПЦЫЯ',aboutMobile:'Ідэя праекта ↗',resetAria:'Вярнуць агульны выгляд',exhibit:'Агульны выгляд',about:'Ідэя праекта',gift:'Падарунак журы',eyebrow:'НАВАГОДНЯЯ ІНТЭРАКТЫЎНАЯ ГІСТОРЫЯ',
+    schoolNav:'Наша школа',schoolButton:'Наша школа · 7 фота',schoolTag:'ШКОЛЬНЫ ФОТААЛЬБОМ · МУХАВЕЦ',schoolLabel:'СТВАРАЕМ СВЯТА РАЗАМ',schoolTitle:'Як наша школа сустракае Новы год',schoolIntro:'Цёплыя сустрэчы, творчасць, узнагароды і ўсмешкі. Сем імгненняў з жыцця нашай школы.',schoolSource:'Фатаграфіі з Instagram школы, прадастаўленыя для праекта.',schoolAria:'Фатаграфіі школы',homeText:'← Пачатак',edition:'НОВЫ ГОД / 2027',concept:'LUMEN / КАНЦЭПЦЫЯ',aboutMobile:'Ідэя праекта ↗',resetAria:'Вярнуць агульны выгляд',exhibit:'Да ёлкі',about:'Ідэя праекта',gift:'Падарунак журы',eyebrow:'НАВАГОДНЯЯ ІНТЭРАКТЫЎНАЯ ГІСТОРЫЯ',
     title:'Няхай здарыцца<br> <em>цуд.</em>',intro:'Ціха падае снег. Мігцяць агні. І недзе паміж галінамі ўжо хаваецца ваша навагодняе жаданне.',enter:'Увайсці ў зімовы сад',introHint:'Лепш з гукам · сапраўдная 3D-прагулка',objectLabel:'СВЯТЛО, ЯКОЕ АБ’ЯДНОЎВАЕ',
     referenceLabel:'Візуальны эскіз зімовага саду',authorFull:'Якушэвіч Арсеній',authorSchool:'вучань 11-га класа · п. Мухавец',authorLabel:'АЎТАР ПРАЕКТА',monogram:'АЯ',authorName:'Якушэвіч<br> Арсеній',class:'вучань 11-га класа',authorNote:'Ствараю сёння.\nМару пра будучыню.',openGift:'Для тых, хто верыць у ідэі',
     sceneCaption:'ВЫБЕРЫЦЕ НАСТРОЙ',emerald:'Калядны',aurora:'Месяцовае святло',gold:'Залатая гадзіна',soundOff:'Гук выкл.',soundOn:'Гук укл.',loading:'Збіраем святло…',welcome:'ЗІМОВЫ САД · LUMEN',walkHint:'Рухайцеся клавішамі<br><b>Азірайцеся мышшу</b>',orbitHint:'Паварочвайце сцэну мышшу<br><b>Маштаб — колцам · WASD — прагулка</b>',giftHint:'Націсніце на падарунак пад ёлкай ✧',wish:'Загадаць жаданне',orbit:'Агляд',walk:'Прагулка',
@@ -30,6 +31,7 @@ const copy = {
   }
 };
 let lang=safeStorage.get('lumen-lang')==='be'?'be':'ru',entered=false,mode='orbit',soundPlaying=false,snowing=true,theme='emerald',sceneReady=false;
+let schoolIndex=0;
 let sceneAPI=null,wishTimer=null,wishIndex=0;
 function setLanguage(value){
   lang=value;const t=copy[lang];document.documentElement.lang=lang;document.title=lang==='ru'?'LUMEN — ёлка будущего':'LUMEN — ёлка будучыні';
@@ -39,9 +41,15 @@ function setLanguage(value){
   $('#scene').setAttribute('aria-label',t.sceneAria);$('.nav').setAttribute('aria-label',t.navAria);$('#home').setAttribute('aria-label',t.homeAria);$('#snow').setAttribute('aria-label',t.snowAria);$('#fullscreen').setAttribute('aria-label',t.fullAria);$('#camera-reset').setAttribute('aria-label',t.resetAria);$('#camera-reset').title=t.resetAria;$('.themes').setAttribute('aria-label',t.themesAria);$$('[data-close]').forEach(e=>e.setAttribute('aria-label',t.closeAria));$$('[data-dir]').forEach(e=>e.setAttribute('aria-label',t[e.dataset.dir]));
   $('#sound span').textContent=t[soundPlaying?'soundOn':'soundOff'];$('#sound').setAttribute('aria-label',t[soundPlaying?'soundOn':'soundOff']);$('.move-hint p').innerHTML=t[mode==='walk'?'walkHint':'orbitHint'];
   if($('#wish-message').classList.contains('show'))$('#wish-message').textContent=t.wishes[(wishIndex-1)%t.wishes.length];
+  sceneAPI?.language(lang);if($('#school-thumbnails').children.length)showSchoolPhoto(schoolIndex);
   safeStorage.set('lumen-lang',lang);
 }
 $('#ru').onclick=()=>setLanguage('ru');$('#be').onclick=()=>setLanguage('be');setLanguage(lang);
+
+function showSchoolPhoto(index){schoolIndex=index;const photo=schoolPhotos[index];$('#school-image').src=schoolImage(photo);$('#school-image').alt=photo[lang];$('#school-caption').textContent=photo[lang];$('#school-count').textContent=String(index+1).padStart(2,'0')+' / 07';$('#school-thumbnails').setAttribute('aria-label',copy[lang].schoolAria);$$('[data-school-index]').forEach((b,i)=>{b.setAttribute('aria-label',schoolPhotos[i][lang]);b.setAttribute('aria-pressed',i===index);});}
+function openSchool(index=0){showSchoolPhoto(index);openPanel('#school-gallery');}
+for(const [index,photo] of schoolPhotos.entries()){const button=document.createElement('button');button.type='button';button.dataset.schoolIndex=index;button.setAttribute('aria-pressed','false');const img=document.createElement('img');img.src=schoolImage(photo);img.alt='';img.loading='lazy';button.appendChild(img);button.onclick=()=>showSchoolPhoto(index);$('#school-thumbnails').appendChild(button);}
+$('#school-nav').onclick=()=>openSchool(0);$('#school-open').onclick=()=>openSchool(0);
 
 const openPanel=id=>{sceneAPI?.clearKeys();sceneAPI?.pause();$(id).showModal();};
 $('#about').onclick=()=>openPanel('#about-panel');$('#about-mobile').onclick=()=>openPanel('#about-panel');$('#gift-nav').onclick=()=>openPanel('#letter');$('#gift-card').onclick=()=>openPanel('#about-panel');
@@ -54,7 +62,7 @@ function enter(){
 }
 $('#enter').onclick=enter;
 function resetView(){if(!entered)return;setMode('orbit');sceneAPI?.reset();$('#scene').focus({preventScroll:true});}
-$('#exhibit').onclick=resetView;$('#camera-reset').onclick=resetView;
+$('#exhibit').onclick=()=>{if(!entered)return;setMode('orbit');sceneAPI?.treeView();$('#scene').focus({preventScroll:true});};$('#camera-reset').onclick=resetView;
 $('#home').onclick=()=>{entered=false;document.body.classList.remove('visiting');$('#intro').removeAttribute('inert');$('#visit-ui').hidden=true;$('#mobile-move').hidden=true;sceneAPI?.home();};
 function setMode(next){mode=next;$('#orbit-mode').classList.toggle('selected',mode==='orbit');$('#walk-mode').classList.toggle('selected',mode==='walk');$('#orbit-mode').setAttribute('aria-pressed',mode==='orbit');$('#walk-mode').setAttribute('aria-pressed',mode==='walk');$('.move-hint p').innerHTML=copy[lang][mode==='walk'?'walkHint':'orbitHint'];syncInputUI();sceneAPI?.setMode(mode);}
 function syncInputUI(){$('#mobile-move').hidden=!(entered&&mode==='walk'&&(innerWidth<=900||matchMedia('(pointer:coarse)').matches));}
@@ -95,8 +103,8 @@ document.addEventListener('visibilitychange',()=>{sceneAPI?.clearKeys();if(music
 
 // The welcome artwork sets the mood; the interactive garden is fully three-dimensional.
 for(let i=0;i<(innerWidth<=760?12:20);i++){const flake=document.createElement('i');flake.style.cssText=`left:${Math.random()*100}%;animation-delay:-${Math.random()*18}s;animation-duration:${12+Math.random()*15}s;opacity:${.12+Math.random()*.3};width:${1+Math.random()*3}px;height:${1+Math.random()*3}px`;$('.intro-snow').appendChild(flake);}
-import('./winter-scene.js?v=4').then(async ({createWinterScene})=>{
-  sceneAPI=await createWinterScene({container:$('#scene'),getState:()=>({entered,mode}),onMode:setMode,onGift:()=>openPanel('#letter')});
+import('./winter-scene.js?v=5').then(async ({createWinterScene})=>{
+  sceneAPI=await createWinterScene({container:$('#scene'),getState:()=>({entered,mode,lang}),onMode:setMode,onGift:()=>openPanel('#letter'),onSchool:openSchool});
   sceneReady=true;sceneAPI.theme(theme);sceneAPI.snow(snowing);$('#loading').hidden=true;$('#enter').disabled=false;$('#enter').setAttribute('aria-busy','false');
 }).catch(error=>{console.error('LUMEN:',error);$('#loading').hidden=true;$('#fallback').hidden=false;$('#enter').disabled=true;});
 
