@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#081320">
+  <meta name="description" content="LUMEN — интерактивная мультимедийная ёлка. Автор: Якушевич Арсений, ученик 11-го класса.">
+  <title>LUMEN — ёлка будущего</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="./style.css?v=4">
+  <link rel="stylesheet" href="./interface.css?v=4">
+  <script type="importmap">{"imports":{"three":"./assets/three.module.min.js","three/addons/":"./assets/"}}</script>
+</head>
+<body>
+  <div id="scene" aria-label="Интерактивная трёхмерная ёлка" tabindex="0"></div>
+  <div class="welcome-art" id="welcome-art" aria-hidden="true"></div><div class="vignette" aria-hidden="true"></div><div class="intro-snow" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+  <header class="header">
+    <button class="back-home" id="home" data-i18n="homeText" aria-label="На начальный экран">← Начало</button>
+    <nav class="nav" aria-label="Навигация">
+      <button class="nav-link active" id="exhibit" data-i18n="exhibit">Инсталляция</button>
+      <button class="nav-link" id="about" data-i18n="about">Идея проекта</button>
+      <button class="nav-link nav-gift" id="gift-nav"><span data-i18n="gift">Подарок жюри</span><span class="tiny-arrow">↗</span></button>
+    </nav>
+    <div class="header-right">
+      <span class="edition" data-i18n="edition">НОВЫЙ ГОД / 2027</span>
+      <div class="language" role="group" aria-label="Язык / Мова">
+        <button id="ru" class="selected" lang="ru" aria-pressed="true">RU</button>
+        <span>/</span>
+        <button id="be" lang="be" aria-pressed="false">BE</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="intro" id="intro" aria-labelledby="main-title">
+      <div class="eyebrow"><span class="live-dot"></span><span data-i18n="eyebrow">НОВОГОДНЯЯ ИНТЕРАКТИВНАЯ ИСТОРИЯ</span></div>
+      <h1 id="main-title" data-i18n-html="title">Пусть случится<br> <em>чудо.</em></h1>
+      <p class="intro-copy" data-i18n="intro">Тихо падает снег. Мерцают огни. И где-то между ветвями уже прячется ваше новогоднее желание.</p>
+      <button class="enter" id="enter" aria-busy="true" disabled><span data-i18n="enter">Войти в зимний сад</span><span class="enter-arrow">→</span></button>
+      <div class="intro-meta"><span class="key-icon">♫</span><span data-i18n="introHint">Лучше со звуком · настоящая 3D-прогулка</span></div>
+    <div id="loading" class="loading"><span class="loading-ring"></span><span data-i18n="loading">Собираем свет…</span></div>
+    </section>
+
+    <aside class="author" id="author">
+      <button id="gift-card" class="author-compact"><span class="author-seal" aria-hidden="true">А</span><span><strong data-i18n="authorFull">Якушевич Арсений</strong><small data-i18n="authorSchool">ученик 11-го класса · п. Мухавец</small></span><span class="author-star" aria-hidden="true">✦</span></button>
+    </aside>
+
+    <section class="visit-ui" id="visit-ui" hidden>
+      <div class="visit-heading"><span class="live-dot"></span><span data-i18n="welcome">ВЫ В ПРОСТРАНСТВЕ LUMEN</span></div>
+      <div class="move-hint"><span class="keycaps"><kbd>W</kbd><span><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd></span></span><p data-i18n-html="walkHint">Двигайтесь клавишами<br><b>Осматривайтесь мышью</b></p></div>
+      <button class="wish-btn" id="wish"><span>✦</span><span data-i18n="wish">Зажечь желание</span></button>
+      <div class="mode-switch" role="group"><button id="orbit-mode" class="selected" data-i18n="orbit">Обзор</button><button id="walk-mode" data-i18n="walk">Прогулка</button></div>
+      <p class="gift-hint" data-i18n="giftHint">Нажмите на подарок под ёлкой ✧</p>
+    </section>
+    <div id="wish-message" class="wish-message" role="status"></div>
+
+    <div id="fallback" class="fallback" hidden><span>✧</span><h2 data-i18n="fallbackTitle">Для этой ёлки нужен WebGL</h2><p data-i18n="fallbackText">Откройте сайт в современном браузере с включённым аппаратным ускорением. Поздравление и история проекта доступны в меню.</p></div>
+  </main>
+
+  <footer class="toolbar">
+    <div class="scene-info"><span class="scene-index">01 <span>/ 03</span></span><span class="scene-caption" data-i18n="sceneCaption">ВЫБЕРИТЕ НАСТРОЕНИЕ</span></div>
+    <div class="themes" role="group" aria-label="Световые настроения">
+      <button class="theme selected" data-theme="emerald" aria-pressed="true"><i class="swatch emerald"></i><span data-i18n="emerald">Рождественский</span></button>
+      <button class="theme" data-theme="aurora" aria-pressed="false"><i class="swatch aurora"></i><span data-i18n="aurora">Лунный свет</span></button>
+      <button class="theme" data-theme="gold" aria-pressed="false"><i class="swatch gold"></i><span data-i18n="gold">Золотой час</span></button>
+    </div>
+    <div class="tools">
+      <button class="tool about-mobile" id="about-mobile" data-i18n="aboutMobile">Идея проекта ↗</button>
+      <button class="tool" id="sound" aria-pressed="false"><svg viewBox="0 0 22 22" aria-hidden="true"><path d="M4 9h3l4-4v12l-4-4H4V9Zm10-2c2 2 2 6 0 8m3-11c4 4 4 10 0 14"/></svg><span data-i18n="soundOff">Звук выкл.</span></button>
+      <button class="tool snow-btn" id="snow" aria-pressed="true" aria-label="Снег"><span class="snow-icon">❄</span></button>
+      <button class="tool camera-reset" id="camera-reset" aria-label="Общий вид" title="Общий вид"><svg viewBox="0 0 22 22" aria-hidden="true"><path d="M5 7a7 7 0 1 1-1 7M5 3v5h5"/></svg></button>
+      <span class="tool-divider"></span>
+      <button class="tool fullscreen" id="fullscreen" aria-label="Полный экран"><svg viewBox="0 0 22 22" aria-hidden="true"><path d="M8 4H4v4m10-4h4v4M4 14v4h4m6 0h4v-4"/></svg></button>
+    </div>
+  </footer>
+
+  <div class="mobile-move" id="mobile-move" hidden aria-label="Движение"><button data-dir="forward" aria-label="Вперёд">↑</button><div><button data-dir="left" aria-label="Влево">←</button><button data-dir="back" aria-label="Назад">↓</button><button data-dir="right" aria-label="Вправо">→</button></div></div>
+
+  <dialog id="letter" class="panel letter-panel" aria-labelledby="letter-title">
+    <div class="panel-top"><span class="overline" data-i18n="letterTag">ЛИЧНОЕ ПОСЛАНИЕ / 2027</span><button class="close" data-close aria-label="Закрыть">×</button></div>
+    <div class="letter-scroll" tabindex="0">
+      <div class="letter-symbol" aria-hidden="true">✧</div>
+      <p class="overline accent" data-i18n="letterOverline">С ТЕПЛОМ — ЧЕРЕЗ ТЕХНОЛОГИИ</p>
+      <h2 id="letter-title" data-i18n-html="letterTitle">Большие мечты<br>начинаются с <em>искры.</em></h2>
+      <div class="letter-text" data-i18n-html="letterBody"></div>
+      <div class="signature"><span class="signature-script" data-i18n="signature">Арсений</span><p data-i18n="signatureDetail">Якушевич Арсений · ученик 11-го класса</p></div>
+      <div class="letter-bottom"><span data-i18n="letterEnd">ПУСТЬ ВАШ НОВЫЙ ГОД БУДЕТ СВЕТЛЫМ.</span><span>✦</span></div>
+    </div>
+  </dialog>
+
+  <dialog id="about-panel" class="panel about-panel" aria-labelledby="about-title">
+    <div class="panel-top"><span class="overline" data-i18n="concept">LUMEN / КОНЦЕПЦИЯ</span><button class="close" data-close aria-label="Закрыть">×</button></div>
+    <div class="letter-scroll">
+      <img class="concept-art" src="./assets/winter-reference.webp" alt="" loading="lazy">
+      <p class="reference-label" data-i18n="referenceLabel">Визуальный эскиз зимнего сада</p>
+      <p class="overline accent" data-i18n="aboutTag">ТРАДИЦИЯ В НОВОМ ИЗМЕРЕНИИ</p>
+      <h2 id="about-title" data-i18n-html="aboutTitle">А что, если ёлка<br>сделана из <em>света?</em></h2>
+      <p class="about-lead" data-i18n="aboutLead">LUMEN — моя идея новогодней ёлки будущего. Знакомый с детства символ превращается в живую цифровую скульптуру, которую можно исследовать.</p>
+      <div class="concept-row"><span>01</span><div><h3 data-i18n="formTitle">Форма</h3><p data-i18n="formText">Кристаллические ветви, световая спираль и звезда. Ёлка собрана из геометрии и света в отдельном круглом павильоне.</p></div></div>
+      <div class="concept-row"><span>02</span><div><h3 data-i18n="mediaTitle">Ощущение</h3><p data-i18n="mediaText">Три световых настроения, падающий снег и авторская синтезированная мелодия. Вы выбираете, каким будет этот маленький мир.</p></div></div>
+      <div class="concept-row"><span>03</span><div><h3 data-i18n="ideaTitle">Смысл</h3><p data-i18n="ideaText">Технологии могут дарить тепло. Я хочу учиться, создавать полезные и красивые продукты и находить людей, с которыми можно воплощать смелые идеи.</p></div></div>
+      <p class="project-credit" data-i18n="credit">Якушевич Арсений, ученик 11-го класса, п. Мухавец.</p>
+    </div>
+  </dialog>
+  <script type="module" src="./app.js?v=4"></script>
+</body>
+</html>
